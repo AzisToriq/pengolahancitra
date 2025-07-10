@@ -1,0 +1,20 @@
+# Python virtual env
+venv/
+
+# Cache dan sampah Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Editor dan sistem
+.vscode/
+.idea/
+.env
+.DS_Store
+Thumbs.db
+
+# Folder hasil upload dan proses gambar
+static/uploads/
+static/results/
+static/temp/
