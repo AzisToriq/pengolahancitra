@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hasil Multi Upload - Digital X-ray</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.41.0/tabler-icons.min.js"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .sidebar::-webkit-scrollbar-thumb {
+      background-color: #3B82F6;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-b from-white via-blue-50 to-white text-gray-800 flex min-h-screen relative">
+
+  <!-- Toggle Sidebar Button (mobile) -->
+  <button class="md:hidden fixed top-4 left-4 z-50 bg-blue-600 p-2 rounded-full text-white shadow-md" onclick="toggleSidebar()">
+    <i class="ti ti-menu-2 text-xl"></i>
+  </button>
+
+  <!-- Sidebar -->
+  <aside class="sidebar fixed top-0 left-0 h-full w-72 bg-gradient-to-b from-blue-900 to-blue-800 text-white flex flex-col shadow-xl overflow-y-auto transition-transform duration-300 md:translate-x-0 -translate-x-full md:block z-40">
+    <div class="px-8 py-10 flex items-center justify-center border-b border-blue-700">
+      <h1 class="text-3xl font-extrabold tracking-wide flex items-center gap-3 drop-shadow-lg">
+        <i class="ti ti-activity text-blue-300 text-3xl"></i>
+        Digital X-ray
+      </h1>
+    </div>
+    <nav class="flex-1 px-6 py-6 space-y-5">
+      <a href="{{ url_for('index') }}" class="flex items-center gap-4 px-5 py-3 rounded-xl hover:bg-blue-700 transition duration-300 font-semibold text-lg">
+        <i class="ti ti-home text-blue-300"></i> Beranda
+      </a>
+      <a href="{{ url_for('upload') }}" class="flex items-center gap-4 px-5 py-3 rounded-xl hover:bg-blue-700 transition duration-300 font-semibold text-lg">
+        <i class="ti ti-upload text-blue-300"></i> Upload Gambar
+      </a>
+    </nav>
+    <div class="px-6 py-4 border-t border-blue-700 text-sm text-blue-300 text-center">
+      &copy; {{ tahun | default("2025") }} Digital X-ray
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="md:ml-72 flex-1 p-6 sm:p-12 bg-white rounded-tr-3xl rounded-br-3xl shadow-lg transition-all duration-300 max-w-7xl mx-auto">
+    
+    <!-- Header -->
+    <header class="mb-12">
+      <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-blue-700 tracking-tight mb-4 drop-shadow-md leading-snug break-keep">
+        📊 Hasil Peningkatan Citra X-ray
+      </h2>
+      <p class="text-lg text-gray-600 max-w-3xl leading-relaxed">
+        Berikut adalah hasil pemrosesan gambar X-ray yang telah kamu upload. Bandingkan tiap tahapannya secara visual.
+      </p>
+    </header>
+
+    {% for img in results %}
+    <section class="mb-16 bg-white p-6 rounded-2xl shadow-xl border border-gray-100 hover:shadow-2xl transition-shadow duration-300">
+      <h3 class="text-xl font-semibold text-blue-600 mb-6 flex items-center gap-2">
+        <i class="ti ti-photo"></i> File: {{ img.filename }}
+      </h3>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 text-center">
+        <!-- Original -->
+        <div class="hover:scale-105 transition-transform">
+          <img src="/{{ img.original }}" class="rounded-xl border border-gray-300 shadow-sm w-full h-36 object-cover" />
+          <p class="mt-2 text-sm font-medium text-gray-700">Original</p>
+        </div>
+        <!-- Grayscale -->
+        <div class="hover:scale-105 transition-transform">
+          <img src="/{{ img.gray }}" class="rounded-xl border border-gray-300 shadow-sm w-full h-36 object-cover" />
+          <p class="mt-2 text-sm font-medium text-gray-700">Grayscale</p>
+        </div>
+        <!-- CLAHE -->
+        <div class="hover:scale-105 transition-transform">
+          <img src="/{{ img.clahe }}" class="rounded-xl border border-gray-300 shadow-sm w-full h-36 object-cover" />
+          <p class="mt-2 text-sm font-medium text-gray-700">CLAHE</p>
+        </div>
+        <!-- Edge Detection -->
+        <div class="hover:scale-105 transition-transform">
+          <img src="/{{ img.edge }}" class="rounded-xl border border-gray-300 shadow-sm w-full h-36 object-cover" />
+          <p class="mt-2 text-sm font-medium text-gray-700">Edge Detection</p>
+          <p class="text-xs text-rose-600 mt-1">🧩 {{ img.edge_count }} edge pixels</p>
+        </div>
+        <!-- Histogram -->
+        <div class="hover:scale-105 transition-transform">
+          <img src="/{{ img.histogram }}" class="rounded-xl border border-gray-300 shadow-sm w-full h-36 object-contain" />
+          <p class="mt-2 text-sm font-medium text-gray-700">Histogram</p>
+        </div>
+      </div>
+    </section>
+    {% endfor %}
+
+    <!-- Back Button -->
+    <div class="text-center mt-10">
+      <a href="{{ url_for('index') }}" class="inline-flex items-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-7 py-4 rounded-xl font-semibold shadow-lg transition duration-300">
+        <i class="ti ti-arrow-left"></i> Kembali ke Beranda
+      </a>
+    </div>
+
+  </main>
+
+  <!-- Sidebar Toggle Script -->
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.querySelector('.sidebar');
+      sidebar.classList.toggle('-translate-x-full');
+    }
+  </script>
+</body>
+</html>

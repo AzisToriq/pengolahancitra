@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hasil Peningkatan Citra - Digital X-ray</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.41.0/tabler-icons.min.js"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .sidebar::-webkit-scrollbar-thumb {
+      background-color: #3B82F6;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-b from-white via-blue-50 to-white text-gray-800 flex min-h-screen">
+
+  <!-- Sidebar -->
+  <aside class="sidebar fixed top-0 left-0 h-full w-72 bg-gradient-to-b from-blue-900 to-blue-800 text-white flex flex-col shadow-xl overflow-y-auto">
+    <div class="px-8 py-10 flex items-center justify-center border-b border-blue-700">
+      <h1 class="text-3xl font-extrabold tracking-wide flex items-center gap-3 drop-shadow-lg">
+        <i class="ti ti-activity text-blue-300 text-3xl"></i>
+        Digital X-ray
+      </h1>
+    </div>
+    <nav class="flex-1 px-6 py-6 space-y-5">
+      <a href="{{ url_for('index') }}" class="flex items-center gap-4 px-5 py-3 rounded-xl hover:bg-blue-700 transition duration-300 font-semibold text-lg">
+        <i class="ti ti-home text-blue-300"></i> Beranda
+      </a>
+      <a href="{{ url_for('upload') }}" class="flex items-center gap-4 px-5 py-3 rounded-xl hover:bg-blue-700 transition duration-300 font-semibold text-lg">
+        <i class="ti ti-upload text-blue-300"></i> Upload Gambar
+      </a>
+    </nav>
+    <div class="px-6 py-4 border-t border-blue-700 text-sm text-blue-300 text-center">
+      &copy; {{ tahun | default("2025") }} Digital X-ray
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="ml-72 flex-1 p-10 max-w-7xl mx-auto">
+
+    <h2 class="text-3xl font-extrabold text-blue-700 mb-10 flex items-center gap-3">
+      <i class="ti ti-image"></i> 🫁 Hasil Peningkatan Citra X-ray
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
+      <!-- Original -->
+      <div>
+        <img src="/{{ original }}" alt="Original" class="rounded-xl border border-gray-300 shadow-sm object-cover w-full h-48" />
+        <p class="mt-3 text-gray-600 font-medium">Original</p>
+      </div>
+      <!-- Grayscale -->
+      <div>
+        <img src="/{{ gray }}" alt="Grayscale" class="rounded-xl border border-gray-300 shadow-sm object-cover w-full h-48" />
+        <p class="mt-3 text-gray-600 font-medium">Grayscale</p>
+      </div>
+      <!-- CLAHE -->
+      <div>
+        <img src="/{{ clahe }}" alt="CLAHE" class="rounded-xl border border-gray-300 shadow-sm object-cover w-full h-48" />
+        <p class="mt-3 text-gray-600 font-medium">CLAHE</p>
+      </div>
+      <!-- Edge Detection -->
+      <div>
+        <img src="/{{ edge }}" alt="Edge Detection" class="rounded-xl border border-gray-300 shadow-sm object-cover w-full h-48" />
+        <p class="mt-3 text-gray-600 font-medium">Edge Detection</p>
+        <p class="text-rose-600 text-sm mt-1">🧩 Edge Pixels: {{ edge_count }}</p>
+      </div>
+    </div>
+
+    <div class="mt-10 max-w-xl mx-auto text-center">
+      <p class="text-gray-500 mb-3 flex items-center justify-center gap-2">
+        <i class="ti ti-chart-bar"></i> 📊 Histogram Intensitas
+      </p>
+      <img src="/{{ histogram }}" alt="Histogram" class="mx-auto rounded-xl border border-gray-300 shadow-sm w-full max-w-[80%] object-contain" />
+    </div>
+
+    <div class="mt-10 flex justify-center gap-4">
+      <a href="/{{ clahe }}" download class="inline-flex items-center gap-2 px-6 py-3 border border-blue-600 text-blue-600 rounded-lg font-semibold hover:bg-blue-600 hover:text-white transition">
+        <i class="ti ti-download"></i> ⬇️ Download Hasil CLAHE
+      </a>
+      <a href="{{ url_for('index') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-300 text-blue-900 rounded-lg font-semibold hover:bg-blue-400 transition">
+        <i class="ti ti-arrow-left"></i> ⬅️ Kembali ke Beranda
+      </a>
+    </div>
+
+  </main>
+</body>
+</html>

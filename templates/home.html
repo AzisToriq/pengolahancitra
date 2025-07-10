@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Digital X-ray - Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.41.0/tabler-icons.min.js"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .sidebar::-webkit-scrollbar-thumb {
+      background-color: #3B82F6;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-b from-white via-blue-50 to-white text-gray-800 flex min-h-screen relative">
+
+  <!-- Toast Notification -->
+  <div id="toast" class="hidden fixed top-6 right-6 bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded-lg shadow-lg z-50 transition-all duration-300">
+    ✅ Gambar berhasil diupload!
+  </div>
+
+  <!-- Loading Spinner -->
+  <div id="spinner" class="hidden fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+    <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-600 border-opacity-50"></div>
+  </div>
+
+  <!-- Toggle Sidebar Button -->
+  <button class="md:hidden fixed top-4 left-4 z-50 bg-blue-600 p-2 rounded-full text-white shadow-md" onclick="toggleSidebar()">
+    <i class="ti ti-menu-2 text-xl"></i>
+  </button>
+
+  <!-- Sidebar -->
+  <aside class="sidebar fixed top-0 left-0 h-full w-72 bg-gradient-to-b from-blue-900 to-blue-800 text-white flex flex-col shadow-xl overflow-y-auto transition-transform duration-300 md:translate-x-0 -translate-x-full md:block z-40">
+    <div class="px-8 py-10 flex items-center justify-center border-b border-blue-700">
+      <h1 class="text-3xl font-extrabold tracking-wide flex items-center gap-3 drop-shadow-lg">
+        <i class="ti ti-activity text-blue-300 text-3xl"></i>
+        Digital X-ray
+      </h1>
+    </div>
+    <nav class="flex-1 px-6 py-6 space-y-5">
+      <a href="{{ url_for('index') }}" class="flex items-center gap-4 px-5 py-3 rounded-xl bg-blue-700 shadow-md hover:bg-blue-600 transition-all duration-300 font-semibold text-lg">
+        <i class="ti ti-home text-blue-300"></i> Beranda
+      </a>
+      <a href="{{ url_for('upload') }}" class="flex items-center gap-4 px-5 py-3 rounded-xl hover:bg-blue-700 transition-all duration-300 font-semibold text-lg">
+        <i class="ti ti-upload text-blue-300"></i> Upload Gambar
+      </a>
+    </nav>
+    <div class="px-6 py-4 border-t border-blue-700 text-sm text-blue-300">
+      &copy; Digital X-ray
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="md:ml-72 flex-1 p-6 sm:p-12 bg-white rounded-tr-3xl rounded-br-3xl shadow-lg transition-all duration-300">
+    <!-- Header -->
+    <header class="mb-12 max-w-4xl mx-auto">
+      <nav class="text-sm text-gray-500 mb-3">
+      </nav>
+      <h2 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-blue-700 tracking-tight mb-4 drop-shadow-md leading-snug break-keep">
+        Peningkatan Citra X-ray
+      </h2>
+      <p class="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+        Visualisasi hasil peningkatan citra berbasis digital.
+      </p>
+    </header>
+
+    {% if grouped_results %}
+      {% for dataset, images in grouped_results.items() %}
+      <section class="mb-16">
+        <h3 class="text-2xl font-semibold text-blue-600 mb-5 flex items-center gap-2">
+          <i class="ti ti-dna text-blue-500"></i> Dataset: {{ dataset }}
+        </h3>
+
+        {% for img in images %}
+        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-6 mb-6 hover:shadow-2xl transition-shadow duration-500">
+          <p class="text-sm text-gray-500 mb-3 flex items-center gap-1">
+            <i class="ti ti-file-description"></i> {{ img.filename }}
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5 justify-items-center">
+            <div class="text-center hover:scale-105 transition-transform">
+              <img src="/{{ img.original }}" class="rounded-xl border border-gray-300 w-full h-36 object-cover mb-4 shadow-sm" />
+              <div class="text-sm mt-2 font-medium text-gray-700">Original</div>
+            </div>
+            <div class="text-center hover:scale-105 transition-transform">
+              <img src="/{{ img.gray }}" class="rounded-xl border border-gray-300 w-full h-36 object-cover mb-4 shadow-sm" />
+              <div class="text-sm mt-2 font-medium text-gray-700">Grayscale</div>
+            </div>
+            <div class="text-center hover:scale-105 transition-transform">
+              <img src="/{{ img.clahe }}" class="rounded-xl border border-gray-300 w-full h-36 object-cover mb-4 shadow-sm" />
+              <div class="text-sm mt-2 font-medium text-gray-700">CLAHE</div>
+            </div>
+            <div class="text-center hover:scale-105 transition-transform">
+              <img src="/{{ img.edge }}" class="rounded-xl border border-gray-300 w-full h-36 object-cover mb-4 shadow-sm" />
+              <div class="text-sm mt-2 font-medium text-gray-700">Edge Detection</div>
+              <div class="text-xs text-rose-600 mt-1">🧩 {{ img.edge_count }} edge pixels</div>
+            </div>
+            <div class="text-center hover:scale-105 transition-transform">
+              <img src="/{{ img.histogram }}" class="rounded-xl border border-gray-300 w-full h-36 object-cover mb-4 shadow-sm" />
+              <div class="text-sm mt-2 font-medium text-gray-700">Histogram</div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </section>
+      <hr class="border-dashed border-gray-300 my-8" />
+      {% endfor %}
+    {% else %}
+      <div class="text-center text-gray-500 mt-32">
+        <i class="ti ti-folder-off text-6xl mb-4 text-blue-400"></i>
+        <h3 class="text-xl font-semibold">Belum ada gambar yang diproses</h3>
+        <p class="text-sm mt-2">Silakan upload gambar terlebih dahulu.</p>
+        <a href="{{ url_for('upload') }}" class="inline-flex mt-6 items-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold shadow transition duration-300">
+          <i class="ti ti-cloud-upload"></i> Upload Gambar
+        </a>
+      </div>
+    {% endif %}
+
+    <!-- Upload Button -->
+    <div class="text-center mt-10">
+      <a href="{{ url_for('upload') }}" class="inline-flex items-center gap-3 bg-blue-600 hover:bg-blue-700 text-white px-7 py-4 rounded-xl font-semibold shadow-lg transition duration-300">
+        <i class="ti ti-cloud-upload"></i> Upload Gambar Sendiri
+      </a>
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.querySelector('.sidebar');
+      sidebar.classList.toggle('-translate-x-full');
+    }
+
+    function showToast(msg, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.remove('hidden');
+      toast.className = type === 'success'
+        ? 'fixed top-6 right-6 bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded-lg shadow-lg z-50'
+        : 'fixed top-6 right-6 bg-red-100 border border-red-400 text-red-800 px-4 py-3 rounded-lg shadow-lg z-50';
+      setTimeout(() => toast.classList.add('hidden'), 4000);
+    }
+
+    const form = document.querySelector("form");
+    if (form) {
+      form.addEventListener("submit", () => {
+        document.getElementById("spinner").classList.remove("hidden");
+      });
+    }
+  </script>
+
+</body>
+</html>
