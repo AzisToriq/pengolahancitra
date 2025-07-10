@@ -1,20 +1,27 @@
-# Python virtual env
+# === Python virtual environment ===
 venv/
+.env
 
-# Cache dan sampah Python
+# === Python cache ===
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
 
-# Editor dan sistem
+# === VSCode & JetBrains project files ===
 .vscode/
 .idea/
-.env
+
+# === System files ===
 .DS_Store
 Thumbs.db
 
-# Folder hasil upload dan proses gambar
+# === Flask temporary folders ===
 static/uploads/
 static/results/
 static/temp/
+
+# === Logs / temp run files (opsional) ===
+*.log
+*.sqlite3
+instance/
